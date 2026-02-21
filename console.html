@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crusys Console 💻</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+        #output { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; margin-bottom: 10px; font-size: 14px; }
+        .input-line { display: flex; border-top: 1px solid #333; padding-top: 10px; }
+        .prompt { margin-right: 10px; color: #55ff55; }
+        input { background: transparent; border: none; color: #0f0; outline: none; flex-grow: 1; font-family: inherit; font-size: 14px; }
+        .error { color: #ff5555; }
+        .info { color: #5555ff; }
+    </style>
+</head>
+<body>
+    <div id="output">Crusys OS [Version 1.0.2]
+Введите .help для просмотра команд.</div>
+    <div class="input-line">
+        <span class="prompt">~/lixlile $</span>
+        <input type="text" id="cmdInput" autofocus autocomplete="off">
+    </div>
+
+    <script>
+        const output = document.getElementById('output');
+        const input = document.getElementById('cmdInput');
+
+        const commands = {
+            '.help': 'Доступные команды:\n .exit - выйти на главную\n .help - список команд\n .time - текущее время\n .download [url] - скачать файл\n .open [игра] - запустить игру (cliker или raketa)',
+            '.exit': () => { window.location.href = 'index.html'; },
+            '.time': () => { return new Date().toLocaleTimeString(); },
+            '.open': (args) => {
+                if (!args[0]) return 'Ошибка: укажите название игры (например: .open cliker)';
+                window.location.href = args[0] + '.html';
+                return 'Запуск ' + args[0] + '...';
+            },
+            '.download': (args) => {
+                if (!args[0]) return 'Ошибка: укажите адрес файла';
+                const link = document.createElement('a');
+                link.href = args[0];
+                link.download = '';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                return 'Попытка скачивания: ' + args[0];
+            }
+        };
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const fullCmd = input.value.trim();
+                const [cmd, ...args] = fullCmd.split(' ');
+                
+                print('\n~/lixlile $ ' + fullCmd);
+
+                if (commands[cmd]) {
+                    const result = typeof commands[cmd] === 'function' ? commands[cmd](args) : commands[cmd];
+                    if (result) print(result);
+                } else {
+                    print('Ошибка: команда "' + cmd + '" не найдена. Введите .help', 'error');
+                }
+
+                input.value = '';
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+        });
+
+        function print(text, type = '') {
+            const div = document.createElement('div');
+            div.className = type;
+            div.innerText = text;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+    </script>
+</body>
+</html>
