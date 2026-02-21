@@ -5,65 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lixlile OS Update</title>
     <style>
-        body { background: #050505; color: #00ff41; font-family: monospace; padding: 20px; }
+        body { background: #050505; color: #00ff41; font-family: monospace; padding: 20px; text-align: center; }
         .update-container { border: 2px solid #00ff41; padding: 20px; max-width: 500px; margin: auto; background: #0a0a0a; box-shadow: 0 0 20px rgba(0,255,65,0.2); }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.85rem; }
         th, td { border: 1px solid #00ff41; padding: 10px; text-align: left; }
         th { color: #000; background: #00ff41; }
         .btn { background: #00ff41; color: #000; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; font-family: monospace; }
-        .btn:disabled { background: #111; color: #444; border: 1px solid #444; cursor: not-allowed; }
         .s-bar { height: 10px; background: #111; margin-top: 15px; display: none; border: 1px solid #00ff41; }
         .progress { height: 100%; background: #00ff41; width: 0%; transition: 0.1s; }
+        #statusTxt { margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="update-container">
-        <h2 style="text-align:center">LIXLILE OS: UPDATE CENTER</h2>
-        <p>Текущая версия в ядре: <span id="curV" style="color:#fff"></span></p>
+        <h2>LIXLILE OS: UPDATE CENTER</h2>
+        <p>Версия системы: <span id="curV" style="color:#fff"></span></p>
         
         <table>
-            <thead><tr><th>Модуль</th><th>Реальные правки</th></tr></thead>
+            <thead><tr><th>Модуль</th><th>Изменения</th></tr></thead>
             <tbody id="changeList"></tbody>
         </table>
 
-        <button class="btn" id="upBtn" onclick="runUpdate()">УСТАНОВИТЬ ОБНОВЛЕНИЕ v1.0.5</button>
+        <button class="btn" id="upBtn" onclick="runUpdate()">УСТАНОВИТЬ ОБНОВЛЕНИЕ</button>
         <div class="s-bar" id="sBar"><div class="progress" id="pBar"></div></div>
-        <p id="statusTxt" style="text-align:center; font-size:0.8rem; display:none">Идет перезапись секторов...</p>
+        <p id="statusTxt" style="display:none; color:#ffff00;">Инициализация...</p>
     </div>
-    <p style="text-align:center; margin-top:30px"><a href="index.html" style="color:#555; text-decoration:none"> <-- Назад в меню</a></p>
 
     <script src="sys_core.js"></script>
     <script>
         const current = getLocalVersion();
         document.getElementById('curV').innerText = "v" + current;
 
-        // Рендерим таблицу из sys_core.js
         const tbody = document.getElementById('changeList');
         SYSTEM_CHANGES.forEach(item => {
             tbody.innerHTML += `<tr><td>${item.module}</td><td>${item.desc}</td></tr>`;
         });
 
-        // Если уже 1.0.5, отключаем кнопку
         if(current === LATEST_VERSION) {
-            document.getElementById('upBtn').innerText = "ОБНОВЛЕНИЕ УСТАНОВЛЕНО";
+            document.getElementById('upBtn').innerText = "ВЕРСИЯ АКТУАЛЬНА (v1.0.5)";
             document.getElementById('upBtn').disabled = true;
         }
 
         function runUpdate() {
             document.getElementById('upBtn').style.display = 'none';
             document.getElementById('sBar').style.display = 'block';
-            document.getElementById('statusTxt').style.display = 'block';
+            const status = document.getElementById('statusTxt');
+            status.style.display = 'block';
+            
             let p = 0;
             const int = setInterval(() => {
                 p += 2;
                 document.getElementById('pBar').style.width = p + "%";
+                
+                if(p < 40) status.innerText = "Скачивание пакетов...";
+                else if(p < 80) status.innerText = "Распаковка Lixlile_Core.bin...";
+                else if(p < 100) status.innerText = "Завершение установки...";
+                
                 if(p >= 100) {
                     clearInterval(int);
+                    status.innerText = "ЗАГРУЗКА ЗАКОНЧЕНА!";
+                    status.style.color = "#00ff41";
                     setLocalVersion(LATEST_VERSION);
-                    alert("Версия 1.0.5 успешно активирована в памяти Lixlile OS!");
-                    window.location.href = "index.html";
+                    
+                    setTimeout(() => {
+                        status.innerText = "ОБНОВЛЕНИЕ ВОССТАНОВЛЕНО. РЕСТАРТ...";
+                        setTimeout(() => {
+                            window.location.href = "index.html?v=" + Math.random();
+                        }, 1500);
+                    }, 1000);
                 }
-            }, 50);
+            }, 60);
         }
     </script>
 </body>
