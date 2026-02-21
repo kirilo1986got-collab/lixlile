@@ -1,20 +1,18 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Crusys Pro Clicker 💎</title>
     <style>
         body { font-family: sans-serif; text-align: center; background: #1a1a2e; color: white; margin: 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        .score-container { font-size: 2.5rem; font-weight: bold; color: #00d2ff; }
+        .score-container { font-size: 3rem; font-weight: bold; color: #00d2ff; text-shadow: 0 0 20px #00d2ff; }
         .coin { width: 180px; height: 180px; background: linear-gradient(45deg, #00d2ff, #3a7bd5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4rem; cursor: pointer; transition: transform 0.1s; border: 5px solid #fff; box-shadow: 0 0 30px rgba(0,210,255,0.5); user-select: none; }
         .coin:active { transform: scale(0.9); }
         .shop { margin-top: 20px; display: grid; gap: 10px; }
-        .shop-btn { background: #16213e; color: white; border: 1px solid #00d2ff; padding: 10px; border-radius: 10px; font-size: 0.9rem; cursor: pointer; }
-        .shop-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .floating-text { position: absolute; color: #fff; font-weight: bold; pointer-events: none; animation: floatUp 0.6s ease-out forwards; }
-        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-80px); opacity: 0; } }
-        .back-btn { margin-top: 20px; color: #aaa; text-decoration: none; font-size: 0.8rem; }
+        .shop-btn { background: #16213e; color: white; border: 1px solid #00d2ff; padding: 10px; border-radius: 10px; cursor: pointer; }
+        .shop-btn:disabled { opacity: 0.5; }
+        .back-btn { margin-top: 20px; color: #aaa; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -22,49 +20,31 @@
     <p id="stats">Клик: +1 | Авто: 0/сек</p>
     <div class="coin" id="clickBtn">💠</div>
     <div class="shop">
-        <button class="shop-btn" id="upgradeClick">Улучшить клик (Цена: 50)</button>
-        <button class="shop-btn" id="upgradeAuto">Авто-майнер (Цена: 150)</button>
+        <button class="shop-btn" id="upgradeClick">Улучшить клик (50💎)</button>
+        <button class="shop-btn" id="upgradeAuto">Авто-майнер (150💎)</button>
     </div>
-    <a href="index.html" class="back-btn">⬅ Назад в меню</a>
+    <a href="index.html" class="back-btn">⬅ Назад</a>
     <script>
         let score = parseInt(localStorage.getItem('c_score')) || 0;
-        let clickPower = parseInt(localStorage.getItem('c_power')) || 1;
-        let autoClick = parseInt(localStorage.getItem('c_auto')) || 0;
+        let power = parseInt(localStorage.getItem('c_power')) || 1;
+        let auto = parseInt(localStorage.getItem('c_auto')) || 0;
         const scoreEl = document.getElementById('score');
         const statsEl = document.getElementById('stats');
 
-        function updateUI() {
+        function update() {
             scoreEl.innerText = Math.floor(score);
-            statsEl.innerText = "Клик: +" + clickPower + " | Авто: " + autoClick + "/сек";
-            document.getElementById('upgradeClick').disabled = score < (clickPower * 50);
+            statsEl.innerText = "Клик: +" + power + " | Авто: " + auto + "/сек";
+            document.getElementById('upgradeClick').disabled = score < (power * 50);
             document.getElementById('upgradeAuto').disabled = score < 150;
         }
 
-        document.getElementById('clickBtn').addEventListener('pointerdown', (e) => {
-            score += clickPower;
-            const t = document.createElement('div'); t.innerText = "+" + clickPower;
-            t.className = 'floating-text'; t.style.left = e.clientX + 'px'; t.style.top = e.clientY + 'px';
-            document.body.appendChild(t); setTimeout(() => t.remove(), 600);
-            updateUI();
-        });
+        document.getElementById('clickBtn').addEventListener('pointerdown', () => { score += power; update(); });
+        document.getElementById('upgradeClick').addEventListener('click', () => { if(score >= power*50){ score -= power*50; power++; update(); } });
+        document.getElementById('upgradeAuto').addEventListener('click', () => { if(score >= 150){ score -= 150; auto++; update(); } });
 
-        document.getElementById('upgradeClick').addEventListener('click', () => {
-            let cost = clickPower * 50;
-            if(score >= cost) { score -= cost; clickPower++; updateUI(); save(); }
-        });
-
-        document.getElementById('upgradeAuto').addEventListener('click', () => {
-            if(score >= 150) { score -= 150; autoClick++; updateUI(); save(); }
-        });
-
-        setInterval(() => { if(autoClick > 0) { score += autoClick/10; updateUI(); } }, 100);
-        function save() {
-            localStorage.setItem('c_score', score);
-            localStorage.setItem('c_power', clickPower);
-            localStorage.setItem('c_auto', autoClick);
-        }
-        setInterval(save, 5000);
-        updateUI();
+        setInterval(() => { if(auto > 0){ score += auto/10; update(); } }, 100);
+        setInterval(() => { localStorage.setItem('c_score', score); localStorage.setItem('c_power', power); localStorage.setItem('c_auto', auto); }, 2000);
+        update();
     </script>
 </body>
 </html>
