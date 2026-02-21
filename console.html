@@ -40,6 +40,10 @@
         const commands = {
             '.help': 'СПИСОК КОМАНД:\n .ver      - Версия системы\n .file     - Список файлов директории\n .say [t]  - Голосовой синтез\n .time     - Системное время\n .open [n] - Запуск модуля\n .clr      - Очистить экран\n .exit     - Выход в UI',
             '.ver': 'Lixlile OS v1.0.4 (Stable Kernel: Build 2026-02-11)',
+            '.ua': 'СТАТУС УКРАИНЫ:
+ Днепр: ONLINE
+ Киев: ONLINE
+ Все области под контролем Lixlile OS.',
             '.time': () => new Date().toLocaleString('ru-RU'),
             '.clr': () => { output.innerHTML = ''; return ''; },
             '.exit': () => { window.location.href = 'index.html'; },

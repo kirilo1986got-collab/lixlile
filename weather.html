@@ -3,36 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crusys Weather 🌤</title>
+    <title>Lixlile OS - Регионы Украины</title>
     <style>
-        body { background: linear-gradient(to bottom, #4ca1af, #2c3e50); color: white; font-family: sans-serif; text-align: center; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0; }
-        .card { background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h1 { font-size: 3rem; margin: 10px 0; }
-        .back-btn { margin-top: 20px; color: white; text-decoration: none; opacity: 0.7; }
+        body { background: #1a1a2e; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        .region-card { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 5px solid #00d2ff; text-align: left; }
+        .temp { float: right; font-size: 1.5rem; color: #ffff00; }
+        h2 { margin: 0; font-size: 1.2rem; }
+        .back-btn { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #333; color: white; text-decoration: none; border-radius: 10px; }
+        .status { font-size: 0.8rem; color: #00ff41; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2 id="city">Загрузка...</h2>
-        <h1 id="temp">--°C</h1>
-        <p id="desc">Ожидание данных</p>
+    <div class="container">
+        <h1>🇺🇦 Власти и Регионы</h1>
+        <div id="regions">
+            <div class="region-card"><h2>Днепр</h2><span class="temp" id="t-dnepr">--°C</span><p class="status">Система: Активна</p></div>
+            <div class="region-card"><h2>Киев</h2><span class="temp" id="t-kiev">--°C</span><p class="status">Система: Активна</p></div>
+            <div class="region-card"><h2>Одесса</h2><span class="temp" id="t-odessa">--°C</span><p class="status">Система: Активна</p></div>
+            <div class="region-card"><h2>Львов</h2><span class="temp" id="t-lviv">--°C</span><p class="status">Система: Активна</p></div>
+            <div class="region-card"><h2>Харьков</h2><span class="temp" id="t-kharkiv">--°C</span><p class="status">Система: Активна</p></div>
+        </div>
+        <a href="index.html" class="back-btn">🏠 Вернуться в Lixlile OS</a>
     </div>
-    <a href="index.html" class="back-btn">🏠 В меню</a>
 
     <script>
-        // Используем бесплатное API для примера
-        async function getWeather() {
+        async function loadWeather(lat, lon, id) {
             try {
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=50.45&longitude=30.52&current_weather=true');
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
                 const data = await res.json();
-                document.getElementById('city').innerText = "Киев"; // Можно поменять на свой город
-                document.getElementById('temp').innerText = Math.round(data.current_weather.temperature) + "°C";
-                document.getElementById('desc').innerText = "Ветер: " + data.current_weather.windspeed + " км/ч";
-            } catch (e) {
-                document.getElementById('desc').innerText = "Ошибка загрузки";
-            }
+                document.getElementById(id).innerText = Math.round(data.current_weather.temperature) + "°C";
+            } catch { document.getElementById(id).innerText = "err"; }
         }
-        getWeather();
+        // Загружаем данные для областей
+        loadWeather(48.46, 35.04, 't-dnepr');
+        loadWeather(50.45, 30.52, 't-kiev');
+        loadWeather(46.48, 30.72, 't-odessa');
+        loadWeather(49.83, 24.02, 't-lviv');
+        loadWeather(49.99, 36.23, 't-kharkiv');
     </script>
 </body>
 </html>
