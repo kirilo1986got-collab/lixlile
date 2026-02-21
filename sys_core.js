@@ -1,18 +1,18 @@
-const VERSION_KEY = "lixlile_v";
 const LATEST_VERSION = "1.0.5";
+const UPDATE_DATE = "21.02.2026";
 
-// Список изменений для версии 1.0.5
-const CHANGELOG = [
-    "Фикс отображения версии (v1.0.5)",
-    "Центр управления областями Украины",
-    "Добавлена системная команда .ua",
-    "Оптимизация базы данных файлов"
+// Реальный список изменений
+const SYSTEM_CHANGES = [
+    { module: "Console", desc: "Добавлены команды .ua, .file, .say" },
+    { module: "UI Menu", desc: "Интеграция Центра обновлений v1.0.5" },
+    { module: "Weather", desc: "Мониторинг всех областей Украины (Днепр, Киев...)" },
+    { module: "Core", desc: "Переход на динамическое отображение версии" }
 ];
 
-function getStoredVersion() {
-    return localStorage.getItem(VERSION_KEY) || "1.0.4";
+function getLocalVersion() {
+    return localStorage.getItem('lixlile_version') || "1.0.4";
 }
 
-function installUpdate() {
-    localStorage.setItem(VERSION_KEY, LATEST_VERSION);
+function setLocalVersion(ver) {
+    localStorage.setItem('lixlile_version', ver);
 }

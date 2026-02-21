@@ -3,67 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lixlile OS - Update Center</title>
+    <title>Lixlile OS Update</title>
     <style>
-        body { background: #000; color: #00ff41; font-family: monospace; padding: 20px; text-align: center; }
-        .box { border: 2px solid #00ff41; padding: 20px; display: inline-block; text-align: left; background: #050505; max-width: 90%; }
-        .btn { background: #00ff41; color: #000; border: none; padding: 15px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
-        .btn:disabled { background: #333; color: #666; }
-        .progress-container { display: none; margin-top: 20px; border: 1px solid #00ff41; height: 20px; }
-        #bar { background: #00ff41; width: 0%; height: 100%; transition: 0.1s; }
-        li { margin-bottom: 5px; color: #aaa; }
+        body { background: #050505; color: #00ff41; font-family: monospace; padding: 20px; }
+        .update-container { border: 1px solid #00ff41; padding: 20px; max-width: 500px; margin: auto; background: #0a0a0a; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.9rem; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
+        th { color: #fff; background: #111; }
+        .btn { background: #00ff41; color: #000; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; }
+        .btn:active { transform: scale(0.98); }
+        .status-bar { height: 5px; background: #222; margin-top: 10px; display: none; }
+        .progress { height: 100%; background: #00ff41; width: 0%; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2>СИСТЕМНОЕ ОБНОВЛЕНИЕ</h2>
-        <p>Текущая версия в памяти: <b id="curV">...</b></p>
-        <div id="updateFound" style="display:none;">
-            <p style="color: #ffff00;">Доступен пакет обновления: v1.0.5</p>
-            <ul id="log"></ul>
-            <button class="btn" onclick="startLoading()">УСТАНОВИТЬ / ВОССТАНОВИТЬ</button>
-        </div>
-        <p id="upToDate" style="display:none; color: #00ff41;">Система уже обновлена до последней версии.</p>
+    <div class="update-container">
+        <h2>ЦЕНТР ОБНОВЛЕНИЯ СИСТЕМЫ</h2>
+        <p>Текущая версия: <span id="curV"></span></p>
         
-        <div class="progress-container" id="pCont">
-            <div id="bar"></div>
-        </div>
-        <p id="pText" style="display:none;">Загрузка компонентов...</p>
+        <table id="changeTable">
+            <thead>
+                <tr>
+                    <th>Модуль</th>
+                    <th>Изменение</th>
+                </tr>
+            </thead>
+            <tbody id="changeList"></tbody>
+        </table>
+
+        <button class="btn" id="upBtn" onclick="runUpdate()">УСТАНОВИТЬ ОБНОВЛЕНИЕ v1.0.5</button>
+        <div class="status-bar" id="sBar"><div class="progress" id="pBar"></div></div>
     </div>
-    <br><br><a href="index.html" style="color:#888; text-decoration:none;">⬅ Назад в меню</a>
+    <p style="text-align:center"><a href="index.html" style="color:#555">Вернуться назад</a></p>
 
     <script src="sys_core.js"></script>
     <script>
-        const curV = getStoredVersion();
-        document.getElementById('curV').innerText = "v" + curV;
+        const current = getLocalVersion();
+        document.getElementById('curV').innerText = "v" + current;
 
-        if (curV !== LATEST_VERSION) {
-            document.getElementById('updateFound').style.display = "block";
-            const logList = document.getElementById('log');
-            CHANGELOG.forEach(item => {
-                const li = document.createElement('li');
-                li.innerText = "- " + item;
-                logList.appendChild(li);
-            });
-        } else {
-            document.getElementById('upToDate').style.display = "block";
+        // Заполняем таблицу реальными данными
+        const tbody = document.getElementById('changeList');
+        SYSTEM_CHANGES.forEach(item => {
+            const row = `<tr><td>${item.module}</td><td>${item.desc}</td></tr>`;
+            tbody.innerHTML += row;
+        });
+
+        if(current === LATEST_VERSION) {
+            document.getElementById('upBtn').innerText = "СИСТЕМА ОБНОВЛЕНА";
+            document.getElementById('upBtn').disabled = true;
         }
 
-        function startLoading() {
-            document.getElementById('updateFound').style.display = "none";
-            document.getElementById('pCont').style.display = "block";
-            document.getElementById('pText').style.display = "block";
+        function runUpdate() {
+            document.getElementById('upBtn').style.display = 'none';
+            document.getElementById('sBar').style.display = 'block';
             let p = 0;
-            const interval = setInterval(() => {
-                p += 2;
-                document.getElementById('bar').style.width = p + "%";
-                if (p >= 100) {
-                    clearInterval(interval);
-                    installUpdate();
-                    alert("Обновление v1.0.5 успешно установлено!");
+            const int = setInterval(() => {
+                p += 5;
+                document.getElementById('pBar').style.width = p + "%";
+                if(p >= 100) {
+                    clearInterval(int);
+                    setLocalVersion(LATEST_VERSION);
+                    alert("Версия 1.0.5 успешно активирована!");
                     window.location.href = "index.html";
                 }
-            }, 50);
+            }, 100);
         }
     </script>
 </body>
