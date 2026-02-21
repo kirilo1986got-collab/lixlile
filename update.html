@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lixlile OS - Центр обновлений</title>
+    <style>
+        body { background: #050505; color: #00ff41; font-family: 'Courier New', monospace; margin: 0; padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        .update-box { border: 2px solid #00ff41; padding: 30px; border-radius: 10px; background: rgba(0, 255, 65, 0.05); max-width: 400px; }
+        .status { margin: 20px 0; font-size: 1.2rem; }
+        .btn { display: inline-block; padding: 15px 25px; background: #00ff41; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; }
+        .btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+        .loader { display: none; margin-top: 20px; }
+        .back-link { margin-top: 30px; color: #aaa; text-decoration: none; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="update-box">
+        <h2>Lixlile Update Center</h2>
+        <div class="status" id="statusText">Проверка текущей версии...</div>
+        <div id="updateInfo" style="display:none; text-align: left; margin-bottom: 20px;">
+            <p>Доступна версия: <b>v1.0.5</b></p>
+            <p>Что нового:<br>- Оптимизация ядра<br>- Патч безопасности регионов<br>- Новые звуки консоли</p>
+        </div>
+        <button class="btn" id="installBtn" onclick="startUpdate()" style="display:none;">УСТАНОВИТЬ ОБНОВЛЕНИЕ</button>
+        <div class="loader" id="loader">
+            Установка: <span id="progress">0</span>%
+            <div style="width: 100%; background: #222; height: 10px; margin-top: 5px;">
+                <div id="bar" style="width: 0%; background: #00ff41; height: 100%;"></div>
+            </div>
+        </div>
+    </div>
+    <a href="index.html" class="back-link">Вернуться в систему</a>
+
+    <script>
+        const currentVersion = "1.0.4"; // Текущая версия
+        const newVersion = "1.0.5";    // Имитируем доступность новой
+
+        setTimeout(() => {
+            document.getElementById('statusText').innerText = "Текущая версия: v" + currentVersion;
+            if (currentVersion !== newVersion) {
+                document.getElementById('statusText').style.color = "#ffff00";
+                document.getElementById('statusText').innerText += " (Доступно обновление!)";
+                document.getElementById('updateInfo').style.display = "block";
+                document.getElementById('installBtn').style.display = "inline-block";
+            }
+        }, 1500);
+
+        function startUpdate() {
+            document.getElementById('installBtn').style.display = "none";
+            document.getElementById('updateInfo').style.display = "none";
+            document.getElementById('loader').style.display = "block";
+            let p = 0;
+            const interval = setInterval(() => {
+                p += Math.floor(Math.random() * 10) + 2;
+                if (p > 100) p = 100;
+                document.getElementById('progress').innerText = p;
+                document.getElementById('bar').style.width = p + "%";
+                if (p === 100) {
+                    clearInterval(interval);
+                    document.getElementById('statusText').innerText = "Lixlile OS обновлена до v" + newVersion;
+                    document.getElementById('statusText').style.color = "#00ff41";
+                    alert("Обновление успешно завершено! Система будет перезагружена.");
+                    window.location.href = "index.html";
+                }
+            }, 300);
+        }
+    </script>
+</body>
+</html>
