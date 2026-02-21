@@ -3,90 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crusys Clicker 🕹️</title>
+    <title>Crusys Pro Clicker 💎</title>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            text-align: center;
-            background: radial-gradient(circle, #1a1a2e, #16213e);
-            color: white;
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        .score-container { font-size: 3rem; font-weight: bold; margin-bottom: 20px; text-shadow: 0 0 20px #00d2ff; }
-        .coin {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(45deg, #ffd700, #ffa500);
-            border-radius: 50%;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5), inset 0 0 20px rgba(0,0,0,0.2);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
-            user-select: none;
-            transition: transform 0.05s;
-            border: 8px solid #ccac00;
-        }
-        .coin:active { transform: scale(0.95); }
-        .back-btn {
-            margin-top: 50px;
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        .floating-text {
-            position: absolute;
-            color: #00d2ff;
-            font-weight: bold;
-            pointer-events: none;
-            animation: floatUp 0.8s ease-out forwards;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(-100px); opacity: 0; }
-        }
+        body { font-family: sans-serif; text-align: center; background: #1a1a2e; color: white; margin: 0; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        .score-container { font-size: 2.5rem; font-weight: bold; color: #00d2ff; }
+        .coin { width: 180px; height: 180px; background: linear-gradient(45deg, #00d2ff, #3a7bd5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4rem; cursor: pointer; transition: transform 0.1s; border: 5px solid #fff; box-shadow: 0 0 30px rgba(0,210,255,0.5); user-select: none; }
+        .coin:active { transform: scale(0.9); }
+        .shop { margin-top: 20px; display: grid; gap: 10px; }
+        .shop-btn { background: #16213e; color: white; border: 1px solid #00d2ff; padding: 10px; border-radius: 10px; font-size: 0.9rem; cursor: pointer; }
+        .shop-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .floating-text { position: absolute; color: #fff; font-weight: bold; pointer-events: none; animation: floatUp 0.6s ease-out forwards; }
+        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-80px); opacity: 0; } }
+        .back-btn { margin-top: 20px; color: #aaa; text-decoration: none; font-size: 0.8rem; }
     </style>
 </head>
 <body>
-
-    <div class="score-container">Монеты: <span id="score">0</span></div>
-    
-    <div class="coin" id="clickBtn">💎</div>
-
+    <div class="score-container">💎 <span id="score">0</span></div>
+    <p id="stats">Клик: +1 | Авто: 0/сек</p>
+    <div class="coin" id="clickBtn">💠</div>
+    <div class="shop">
+        <button class="shop-btn" id="upgradeClick">Улучшить клик (Цена: 50)</button>
+        <button class="shop-btn" id="upgradeAuto">Авто-майнер (Цена: 150)</button>
+    </div>
     <a href="index.html" class="back-btn">⬅ Назад в меню</a>
-
     <script>
-        let score = parseInt(localStorage.getItem('crusys_score')) || 0;
-        const scoreElement = document.getElementById('score');
-        const clickBtn = document.getElementById('clickBtn');
+        let score = parseInt(localStorage.getItem('c_score')) || 0;
+        let clickPower = parseInt(localStorage.getItem('c_power')) || 1;
+        let autoClick = parseInt(localStorage.getItem('c_auto')) || 0;
+        const scoreEl = document.getElementById('score');
+        const statsEl = document.getElementById('stats');
 
-        scoreElement.innerText = score;
+        function updateUI() {
+            scoreEl.innerText = Math.floor(score);
+            statsEl.innerText = "Клик: +" + clickPower + " | Авто: " + autoClick + "/сек";
+            document.getElementById('upgradeClick').disabled = score < (clickPower * 50);
+            document.getElementById('upgradeAuto').disabled = score < 150;
+        }
 
-        clickBtn.addEventListener('pointerdown', (e) => {
-            score++;
-            scoreElement.innerText = score;
-            localStorage.setItem('crusys_score', score);
-
-            // Создаем эффект вылетающей цифры
-            const text = document.createElement('div');
-            text.innerText = '+1';
-            text.className = 'floating-text';
-            text.style.left = e.clientX + 'px';
-            text.style.top = e.clientY + 'px';
-            document.body.appendChild(text);
-
-            setTimeout(() => text.remove(), 800);
+        document.getElementById('clickBtn').addEventListener('pointerdown', (e) => {
+            score += clickPower;
+            const t = document.createElement('div'); t.innerText = "+" + clickPower;
+            t.className = 'floating-text'; t.style.left = e.clientX + 'px'; t.style.top = e.clientY + 'px';
+            document.body.appendChild(t); setTimeout(() => t.remove(), 600);
+            updateUI();
         });
+
+        document.getElementById('upgradeClick').addEventListener('click', () => {
+            let cost = clickPower * 50;
+            if(score >= cost) { score -= cost; clickPower++; updateUI(); save(); }
+        });
+
+        document.getElementById('upgradeAuto').addEventListener('click', () => {
+            if(score >= 150) { score -= 150; autoClick++; updateUI(); save(); }
+        });
+
+        setInterval(() => { if(autoClick > 0) { score += autoClick/10; updateUI(); } }, 100);
+        function save() {
+            localStorage.setItem('c_score', score);
+            localStorage.setItem('c_power', clickPower);
+            localStorage.setItem('c_auto', autoClick);
+        }
+        setInterval(save, 5000);
+        updateUI();
     </script>
 </body>
 </html>

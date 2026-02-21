@@ -1,14 +1,55 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
-    <title>Ракетная тревога!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crusys Rocket 🚀</title>
+    <style>
+        body { margin: 0; background: #050510; color: white; overflow: hidden; font-family: sans-serif; text-align: center; }
+        canvas { display: block; background: url('https://i.imgur.com/8QhYhD3.png'); background-size: cover; }
+        .ui { position: absolute; top: 10px; width: 100%; pointer-events: none; }
+    </style>
 </head>
 <body>
-    <h1 style="background-color: red">Ракети идут всем пройти в подвал!</h1>
-    <nav>
-        <a href="Basedata.html"><button>Exit</button></a>
-    </nav>
+    <div class="ui"><h1>Счет: <span id="rScore">0</span></h1><p>Жми на экран, чтобы лететь!</p></div>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let rocket = { x: 50, y: canvas.height/2, w: 40, h: 40, v: 0, g: 0.4 };
+        let pipes = [];
+        let score = 0;
+        let frames = 0;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Ракета
+            ctx.font = "40px serif";
+            ctx.fillText("🚀", rocket.x, rocket.y);
+            rocket.v += rocket.g;
+            rocket.y += rocket.v;
+
+            if(frames % 100 === 0) pipes.push({ x: canvas.width, y: Math.random() * (canvas.height - 200), w: 50, h: 200 });
+            
+            pipes.forEach((p, i) => {
+                p.x -= 3;
+                ctx.fillStyle = "#00ffcc";
+                ctx.fillRect(p.x, 0, p.w, p.y);
+                ctx.fillRect(p.x, p.y + 150, p.w, canvas.height);
+                if(p.x + p.w < 0) { pipes.splice(i, 1); score++; document.getElementById('rScore').innerText = score; }
+                if(rocket.x < p.x + p.w && rocket.x + 30 > p.x && (rocket.y < p.y || rocket.y + 30 > p.y + 150)) location.reload();
+            });
+
+            if(rocket.y > canvas.height || rocket.y < 0) location.reload();
+            frames++;
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('pointerdown', () => rocket.v = -7);
+        draw();
+    </script>
 </body>
 </html>
