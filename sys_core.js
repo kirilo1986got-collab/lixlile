@@ -1,12 +1,9 @@
 const LATEST_VERSION = "1.0.5";
-const UPDATE_DATE = "21.02.2026";
-
-// Реальный список изменений
 const SYSTEM_CHANGES = [
     { module: "Console", desc: "Добавлены команды .ua, .file, .say" },
-    { module: "UI Menu", desc: "Интеграция Центра обновлений v1.0.5" },
-    { module: "Weather", desc: "Мониторинг всех областей Украины (Днепр, Киев...)" },
-    { module: "Core", desc: "Переход на динамическое отображение версии" }
+    { module: "UI Menu", desc: "Реальный Центр обновлений v1.0.5" },
+    { module: "Ukraine", desc: "Мониторинг Днепра и всех областей" },
+    { module: "Engine", desc: "Переход на динамическую память версий" }
 ];
 
 function getLocalVersion() {

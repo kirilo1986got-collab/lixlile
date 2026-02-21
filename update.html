@@ -6,67 +6,64 @@
     <title>Lixlile OS Update</title>
     <style>
         body { background: #050505; color: #00ff41; font-family: monospace; padding: 20px; }
-        .update-container { border: 1px solid #00ff41; padding: 20px; max-width: 500px; margin: auto; background: #0a0a0a; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.9rem; }
-        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
-        th { color: #fff; background: #111; }
-        .btn { background: #00ff41; color: #000; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; }
-        .btn:active { transform: scale(0.98); }
-        .status-bar { height: 5px; background: #222; margin-top: 10px; display: none; }
-        .progress { height: 100%; background: #00ff41; width: 0%; }
+        .update-container { border: 2px solid #00ff41; padding: 20px; max-width: 500px; margin: auto; background: #0a0a0a; box-shadow: 0 0 20px rgba(0,255,65,0.2); }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.85rem; }
+        th, td { border: 1px solid #00ff41; padding: 10px; text-align: left; }
+        th { color: #000; background: #00ff41; }
+        .btn { background: #00ff41; color: #000; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; font-family: monospace; }
+        .btn:disabled { background: #111; color: #444; border: 1px solid #444; cursor: not-allowed; }
+        .s-bar { height: 10px; background: #111; margin-top: 15px; display: none; border: 1px solid #00ff41; }
+        .progress { height: 100%; background: #00ff41; width: 0%; transition: 0.1s; }
     </style>
 </head>
 <body>
     <div class="update-container">
-        <h2>ЦЕНТР ОБНОВЛЕНИЯ СИСТЕМЫ</h2>
-        <p>Текущая версия: <span id="curV"></span></p>
+        <h2 style="text-align:center">LIXLILE OS: UPDATE CENTER</h2>
+        <p>Текущая версия в ядре: <span id="curV" style="color:#fff"></span></p>
         
-        <table id="changeTable">
-            <thead>
-                <tr>
-                    <th>Модуль</th>
-                    <th>Изменение</th>
-                </tr>
-            </thead>
+        <table>
+            <thead><tr><th>Модуль</th><th>Реальные правки</th></tr></thead>
             <tbody id="changeList"></tbody>
         </table>
 
         <button class="btn" id="upBtn" onclick="runUpdate()">УСТАНОВИТЬ ОБНОВЛЕНИЕ v1.0.5</button>
-        <div class="status-bar" id="sBar"><div class="progress" id="pBar"></div></div>
+        <div class="s-bar" id="sBar"><div class="progress" id="pBar"></div></div>
+        <p id="statusTxt" style="text-align:center; font-size:0.8rem; display:none">Идет перезапись секторов...</p>
     </div>
-    <p style="text-align:center"><a href="index.html" style="color:#555">Вернуться назад</a></p>
+    <p style="text-align:center; margin-top:30px"><a href="index.html" style="color:#555; text-decoration:none"> <-- Назад в меню</a></p>
 
     <script src="sys_core.js"></script>
     <script>
         const current = getLocalVersion();
         document.getElementById('curV').innerText = "v" + current;
 
-        // Заполняем таблицу реальными данными
+        // Рендерим таблицу из sys_core.js
         const tbody = document.getElementById('changeList');
         SYSTEM_CHANGES.forEach(item => {
-            const row = `<tr><td>${item.module}</td><td>${item.desc}</td></tr>`;
-            tbody.innerHTML += row;
+            tbody.innerHTML += `<tr><td>${item.module}</td><td>${item.desc}</td></tr>`;
         });
 
+        // Если уже 1.0.5, отключаем кнопку
         if(current === LATEST_VERSION) {
-            document.getElementById('upBtn').innerText = "СИСТЕМА ОБНОВЛЕНА";
+            document.getElementById('upBtn').innerText = "ОБНОВЛЕНИЕ УСТАНОВЛЕНО";
             document.getElementById('upBtn').disabled = true;
         }
 
         function runUpdate() {
             document.getElementById('upBtn').style.display = 'none';
             document.getElementById('sBar').style.display = 'block';
+            document.getElementById('statusTxt').style.display = 'block';
             let p = 0;
             const int = setInterval(() => {
-                p += 5;
+                p += 2;
                 document.getElementById('pBar').style.width = p + "%";
                 if(p >= 100) {
                     clearInterval(int);
                     setLocalVersion(LATEST_VERSION);
-                    alert("Версия 1.0.5 успешно активирована!");
+                    alert("Версия 1.0.5 успешно активирована в памяти Lixlile OS!");
                     window.location.href = "index.html";
                 }
-            }, 100);
+            }, 50);
         }
     </script>
 </body>
