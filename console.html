@@ -3,20 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crusys OS - Console 💻</title>
+    <title>Lixlile OS Console v1.0.4</title>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
-        #output { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; margin-bottom: 10px; font-size: 14px; }
-        .input-line { display: flex; border-top: 1px solid #333; padding-top: 10px; }
-        .prompt { margin-right: 10px; color: #55ff55; }
-        input { background: transparent; border: none; color: #0f0; outline: none; flex-grow: 1; font-family: inherit; font-size: 14px; }
+        body { background: #050505; color: #00ff41; font-family: 'Courier New', monospace; margin: 0; padding: 15px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+        #output { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; font-size: 14px; line-height: 1.4; text-shadow: 0 0 5px rgba(0,255,65,0.5); }
+        .input-line { display: flex; border-top: 1px solid #222; padding-top: 10px; margin-top: 5px; }
+        .prompt { margin-right: 10px; color: #fff; font-weight: bold; }
+        input { background: transparent; border: none; color: #00ff41; outline: none; flex-grow: 1; font-family: inherit; font-size: 14px; width: 100%; }
+        .cmd-res { color: #aaa; margin-bottom: 5px; }
+        .ver-info { color: #ffff00; }
     </style>
 </head>
 <body>
-    <div id="output">Crusys OS [Console Updated]
-Введите .help для списка команд.</div>
+    <div id="output"><span class="ver-info">Lixlile OS [Version 1.0.4]</span>
+(c) Crusys Corporation, 2026. Все права защищены.
+
+Введите .help для списка доступных директив.</div>
     <div class="input-line">
-        <span class="prompt">~/lixlile $</span>
+        <span class="prompt">L:\></span>
         <input type="text" id="cmdInput" autofocus autocomplete="off">
     </div>
 
@@ -24,46 +28,67 @@
         const output = document.getElementById('output');
         const input = document.getElementById('cmdInput');
 
-        // Список файлов для команды .file (на основе твоего ls)
-        const fileList = ["index.html", "cliker.html", "Raketa.html", "console.html", "weather.html", "1.html", "eko.html", "gas.html", "klik.html", "catsv.mp4"];
+        const fileList = [
+            {n: "index.html", s: "1.2kb"},
+            {n: "cliker.html", s: "4.5kb"},
+            {n: "Raketa.html", s: "3.8kb"},
+            {n: "console.html", s: "2.9kb"},
+            {n: "weather.html", s: "2.1kb"},
+            {n: "catsv.mp4", s: "15mb"}
+        ];
 
         const commands = {
-            '.help': 'Команды:\n .file - кол-во файлов\n .say [текст] - озвучка\n .time - время\n .open [игра]\n .exit - меню',
+            '.help': 'СПИСОК КОМАНД:\n .ver      - Версия системы\n .file     - Список файлов директории\n .say [t]  - Голосовой синтез\n .time     - Системное время\n .open [n] - Запуск модуля\n .clr      - Очистить экран\n .exit     - Выход в UI',
+            '.ver': 'Lixlile OS v1.0.4 (Stable Kernel: Build 2026-02-11)',
+            '.time': () => new Date().toLocaleString('ru-RU'),
+            '.clr': () => { output.innerHTML = ''; return ''; },
             '.exit': () => { window.location.href = 'index.html'; },
-            '.time': () => { return new Date().toLocaleTimeString(); },
-            '.file': () => { return "Всего файлов на сайте: " + fileList.length + "\nСписок: " + fileList.slice(0,5).join(", ") + "..."; },
+            '.file': () => {
+                let res = "Содержимое диска L:\n";
+                fileList.forEach(f => res += ` ${f.s.padEnd(7)} ${f.n}\n`);
+                res += "\nВсего объектов: " + fileList.length;
+                return res;
+            },
             '.say': (args) => {
                 const text = args.join(' ');
-                if (!text) return "Ошибка: напиши текст";
+                if (!text) return "ОШИБКА: Текст не задан";
                 const msg = new SpeechSynthesisUtterance(text);
                 msg.lang = 'ru-RU';
+                msg.rate = 1.0;
                 window.speechSynthesis.speak(msg);
-                return "Озвучиваю: " + text;
+                return "Синтез речи: '" + text + "'";
             },
             '.open': (args) => {
-                if (!args[0]) return "Ошибка: .open [название]";
-                window.location.href = args[0] + '.html';
-                return "Запуск...";
+                if (!args[0]) return "ОШИБКА: Укажите модуль";
+                const target = args[0].toLowerCase();
+                window.location.href = target + '.html';
+                return "Загрузка модуля " + target + "...";
             }
         };
 
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const fullCmd = input.value.trim();
+                if (!fullCmd) return;
                 const [cmd, ...args] = fullCmd.split(' ');
-                print('\n~/lixlile $ ' + fullCmd);
+                
+                print('\nL:\> ' + fullCmd);
+
                 if (commands[cmd]) {
                     const result = typeof commands[cmd] === 'function' ? commands[cmd](args) : commands[cmd];
-                    if (result) print(result);
+                    if (result) print(result, 'cmd-res');
                 } else {
-                    print('Команда не найдена', 'error');
+                    print('Ошибка: команда "' + cmd + '" не распознана.', 'cmd-res');
                 }
+
                 input.value = '';
+                window.scrollTo(0, document.body.scrollHeight);
             }
         });
 
-        function print(text) {
+        function print(text, className = '') {
             const div = document.createElement('div');
+            if (className) div.className = className;
             div.innerText = text;
             output.appendChild(div);
             output.scrollTop = output.scrollHeight;
