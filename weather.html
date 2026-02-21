@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crusys Weather 🌤</title>
+    <style>
+        body { background: linear-gradient(to bottom, #4ca1af, #2c3e50); color: white; font-family: sans-serif; text-align: center; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0; }
+        .card { background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { font-size: 3rem; margin: 10px 0; }
+        .back-btn { margin-top: 20px; color: white; text-decoration: none; opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2 id="city">Загрузка...</h2>
+        <h1 id="temp">--°C</h1>
+        <p id="desc">Ожидание данных</p>
+    </div>
+    <a href="index.html" class="back-btn">🏠 В меню</a>
+
+    <script>
+        // Используем бесплатное API для примера
+        async function getWeather() {
+            try {
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=50.45&longitude=30.52&current_weather=true');
+                const data = await res.json();
+                document.getElementById('city').innerText = "Киев"; // Можно поменять на свой город
+                document.getElementById('temp').innerText = Math.round(data.current_weather.temperature) + "°C";
+                document.getElementById('desc').innerText = "Ветер: " + data.current_weather.windspeed + " км/ч";
+            } catch (e) {
+                document.getElementById('desc').innerText = "Ошибка загрузки";
+            }
+        }
+        getWeather();
+    </script>
+</body>
+</html>

@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crusys Console 💻</title>
+    <title>Crusys OS - Console 💻</title>
     <style>
         body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
         #output { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; margin-bottom: 10px; font-size: 14px; }
         .input-line { display: flex; border-top: 1px solid #333; padding-top: 10px; }
         .prompt { margin-right: 10px; color: #55ff55; }
         input { background: transparent; border: none; color: #0f0; outline: none; flex-grow: 1; font-family: inherit; font-size: 14px; }
-        .error { color: #ff5555; }
-        .info { color: #5555ff; }
     </style>
 </head>
 <body>
-    <div id="output">Crusys OS [Version 1.0.2]
-Введите .help для просмотра команд.</div>
+    <div id="output">Crusys OS [Console Updated]
+Введите .help для списка команд.</div>
     <div class="input-line">
         <span class="prompt">~/lixlile $</span>
         <input type="text" id="cmdInput" autofocus autocomplete="off">
@@ -26,24 +24,26 @@
         const output = document.getElementById('output');
         const input = document.getElementById('cmdInput');
 
+        // Список файлов для команды .file (на основе твоего ls)
+        const fileList = ["index.html", "cliker.html", "Raketa.html", "console.html", "weather.html", "1.html", "eko.html", "gas.html", "klik.html", "catsv.mp4"];
+
         const commands = {
-            '.help': 'Доступные команды:\n .exit - выйти на главную\n .help - список команд\n .time - текущее время\n .download [url] - скачать файл\n .open [игра] - запустить игру (cliker или raketa)',
+            '.help': 'Команды:\n .file - кол-во файлов\n .say [текст] - озвучка\n .time - время\n .open [игра]\n .exit - меню',
             '.exit': () => { window.location.href = 'index.html'; },
             '.time': () => { return new Date().toLocaleTimeString(); },
-            '.open': (args) => {
-                if (!args[0]) return 'Ошибка: укажите название игры (например: .open cliker)';
-                window.location.href = args[0] + '.html';
-                return 'Запуск ' + args[0] + '...';
+            '.file': () => { return "Всего файлов на сайте: " + fileList.length + "\nСписок: " + fileList.slice(0,5).join(", ") + "..."; },
+            '.say': (args) => {
+                const text = args.join(' ');
+                if (!text) return "Ошибка: напиши текст";
+                const msg = new SpeechSynthesisUtterance(text);
+                msg.lang = 'ru-RU';
+                window.speechSynthesis.speak(msg);
+                return "Озвучиваю: " + text;
             },
-            '.download': (args) => {
-                if (!args[0]) return 'Ошибка: укажите адрес файла';
-                const link = document.createElement('a');
-                link.href = args[0];
-                link.download = '';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                return 'Попытка скачивания: ' + args[0];
+            '.open': (args) => {
+                if (!args[0]) return "Ошибка: .open [название]";
+                window.location.href = args[0] + '.html';
+                return "Запуск...";
             }
         };
 
@@ -51,24 +51,19 @@
             if (e.key === 'Enter') {
                 const fullCmd = input.value.trim();
                 const [cmd, ...args] = fullCmd.split(' ');
-                
                 print('\n~/lixlile $ ' + fullCmd);
-
                 if (commands[cmd]) {
                     const result = typeof commands[cmd] === 'function' ? commands[cmd](args) : commands[cmd];
                     if (result) print(result);
                 } else {
-                    print('Ошибка: команда "' + cmd + '" не найдена. Введите .help', 'error');
+                    print('Команда не найдена', 'error');
                 }
-
                 input.value = '';
-                window.scrollTo(0, document.body.scrollHeight);
             }
         });
 
-        function print(text, type = '') {
+        function print(text) {
             const div = document.createElement('div');
-            div.className = type;
             div.innerText = text;
             output.appendChild(div);
             output.scrollTop = output.scrollHeight;
