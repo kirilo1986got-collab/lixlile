@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crusys Clicker 🕹️</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            background: radial-gradient(circle, #1a1a2e, #16213e);
+            color: white;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .score-container { font-size: 3rem; font-weight: bold; margin-bottom: 20px; text-shadow: 0 0 20px #00d2ff; }
+        .coin {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #ffd700, #ffa500);
+            border-radius: 50%;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5), inset 0 0 20px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            user-select: none;
+            transition: transform 0.05s;
+            border: 8px solid #ccac00;
+        }
+        .coin:active { transform: scale(0.95); }
+        .back-btn {
+            margin-top: 50px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .floating-text {
+            position: absolute;
+            color: #00d2ff;
+            font-weight: bold;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="score-container">Монеты: <span id="score">0</span></div>
+    
+    <div class="coin" id="clickBtn">💎</div>
+
+    <a href="index.html" class="back-btn">⬅ Назад в меню</a>
+
+    <script>
+        let score = parseInt(localStorage.getItem('crusys_score')) || 0;
+        const scoreElement = document.getElementById('score');
+        const clickBtn = document.getElementById('clickBtn');
+
+        scoreElement.innerText = score;
+
+        clickBtn.addEventListener('pointerdown', (e) => {
+            score++;
+            scoreElement.innerText = score;
+            localStorage.setItem('crusys_score', score);
+
+            // Создаем эффект вылетающей цифры
+            const text = document.createElement('div');
+            text.innerText = '+1';
+            text.className = 'floating-text';
+            text.style.left = e.clientX + 'px';
+            text.style.top = e.clientY + 'px';
+            document.body.appendChild(text);
+
+            setTimeout(() => text.remove(), 800);
+        });
+    </script>
+</body>
+</html>
