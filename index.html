@@ -14,6 +14,7 @@
 <meta name="keywords" content="Меню, Помощь, Lix, fut">
 </head>
 <body>
+<div id="loader" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;transition:opacity 1s ease;"><div id="emoji" style="font-size:100px;"></div><h1 id="text" style="font-family:sans-serif;"></h1></div><script>const h=new Date().getHours();let t,e;if(h>=5&&h<12){t="Доброе утро";e="☀️"}else if(h>=12&&h<18){t="Добрый день";e="🌤️"}else if(h>=18&&h<23){t="Добрый вечер";e="🌆"}else{t="Доброй ночи";e="🌙"}document.getElementById("emoji").innerText=e;document.getElementById("text").innerText=t+", Crusys!";setTimeout(()=>{const l=document.getElementById("loader");l.style.opacity="0";setTimeout(()=>l.remove(),1000);},3000);</script>
     <h1>Menu v1.3</h1>
     <nav>
         <!-- виключение -->
