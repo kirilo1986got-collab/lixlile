@@ -1,0 +1,20 @@
+<style>
+  #calc { max-width: 250px; background: #000; color: #0f8; border: 2px solid #0f8; padding: 10px; border-radius: 10px; margin: 20px auto; font-family: monospace; }
+  #display { width: 100%; background: #222; color: #0f8; border: none; font-size: 1.2rem; text-align: right; margin-bottom: 5px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+  button { padding: 10px; background: #111; color: #0f8; border: 1px solid #0f8; cursor: pointer; }
+</style>
+<div id="calc">
+  <input id="display" readonly value="0">
+  <div class="grid">
+    <button onclick="d.value='0'">C</button><button onclick="a('/')">/</button><button onclick="a('*')">*</button><button onclick="a('-')">-</button>
+    <button onclick="a('7')">7</button><button onclick="a('8')">8</button><button onclick="a('9')">9</button><button onclick="a('+')">+</button>
+    <button onclick="a('4')">4</button><button onclick="a('5')">5</button><button onclick="a('6')">6</button><button onclick="e()">=</button>
+    <button onclick="a('1')">1</button><button onclick="a('2')">2</button><button onclick="a('3')">3</button><button onclick="a('0')">0</button>
+  </div>
+</div>
+<script>
+  let d = document.getElementById('display');
+  function a(v){ if(d.value=='0') d.value=v; else d.value+=v; }
+  function e(){ try{ d.value=eval(d.value); }catch{ d.value='Err'; } }
+</script>

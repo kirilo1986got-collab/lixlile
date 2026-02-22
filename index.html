@@ -3,20 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lixlile OS v1.0.5</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; background: #1a1a2e; color: white; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
-        .btn { display: block; width: 250px; margin: 15px auto; padding: 20px; background: #00d2ff; color: #1a1a2e; text-decoration: none; border-radius: 15px; font-weight: bold; font-size: 18px; box-shadow: 0 5px 15px rgba(0,210,255,0.3); }
-    </style>
+    <title>Crusys Site v2.0</title>
+    <link rel="stylesheet" href="lib/style.css">
 </head>
 <body>
-    <h1>Lixlile OS [v1.0.5]</h1>
-    <a href="cliker.html" class="btn">ИГРАТЬ В КЛИКЕР 🕹️</a>
-    <a href="Raketa.html" class="btn" style="background:#ff4d4d">ЗАПУСТИТЬ РАКЕТУ 🚀</a>
-    <a href="console.html" class="btn" style="background:#333; color:#0f0; border:1px solid #0f0">ОТКРЫТЬ КОНСОЛЬ 💻</a>
-    <a href="weather.html" class="btn" style="background:#4ca1af">УЗНАТЬ ПОГОДУ 🌤</a>
-    <a href="update.html" class="btn" style="background:#222; color:#fff; border:1px solid #555">ЦЕНТР ОБНОВЛЕНИЙ ⚙️</a>
-    <p>Обновлено: 19:48:36</p>
-<script src="sys_core.js?v=1.0.5"></script><script>document.getElementById("ver").innerText = getLocalVersion();</script>
+    <h1>Crusys OS v2.0</h1>
+    <div id="calc">
+        <input id="display" readonly value="0">
+        <div class="grid">
+            <button onclick="c()">C</button>
+            <button onclick="a('/')">/</button>
+            <button onclick="a('*')">*</button>
+            <button onclick="a('-')">-</button>
+            <button onclick="a('7')">7</button>
+            <button onclick="a('8')">8</button>
+            <button onclick="a('9')">9</button>
+            <button onclick="a('+')">+</button>
+            <button onclick="a('4')">4</button>
+            <button onclick="a('5')">5</button>
+            <button onclick="a('6')">6</button>
+            <button onclick="e()">=</button>
+            <button onclick="a('1')">1</button>
+            <button onclick="a('2')">2</button>
+            <button onclick="a('3')">3</button>
+            <button onclick="a('0')">0</button>
+        </div>
+    </div>
+    <script src="lib/calc.js"></script>
 </body>
 </html>
