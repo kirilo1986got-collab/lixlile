@@ -3,32 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crusys Site v2.0</title>
-    <link rel="stylesheet" href="lib/style.css">
+    <title>Crusys OS v2.0 - All-in-One</title>
+    <style>
+        /* Общий стиль */
+        body { background: #0f0f0f; color: #00ff88; font-family: 'Courier New', monospace; text-align: center; margin: 0; padding: 20px; }
+        h1 { border-bottom: 2px solid #00ff88; display: inline-block; padding-bottom: 10px; }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+        .card { background: #1a1a1a; border: 1px solid #00ff88; border-radius: 15px; padding: 20px; width: 300px; box-shadow: 0 0 15px rgba(0, 255, 136, 0.2); }
+        
+        /* Калькулятор */
+        #display { width: 100%; height: 50px; background: #000; color: #0f8; border: 1px solid #0f8; font-size: 1.5rem; text-align: right; margin-bottom: 10px; padding: 5px; box-sizing: border-box; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        button { background: #222; color: #0f8; border: 1px solid #0f8; padding: 15px; cursor: pointer; font-weight: bold; }
+        button:active { background: #0f8; color: #000; }
+        .btn-op { background: #333; color: #ff9500; border-color: #ff9500; }
+
+        /* Кликер */
+        #click-count { font-size: 3rem; margin: 10px 0; color: #ff9500; }
+        .btn-main { background: #00ff88; color: #000; width: 100%; font-size: 1.2rem; border-radius: 10px; }
+
+        /* Ракета */
+        #game-area { height: 150px; position: relative; overflow: hidden; border: 1px dashed #444; margin-top: 10px; }
+        #rocket { font-size: 40px; position: absolute; cursor: pointer; transition: 0.2s; left: 40%; top: 30%; }
+        
+        footer { margin-top: 30px; font-size: 0.8rem; opacity: 0.6; }
+    </style>
 </head>
 <body>
-    <h1>Crusys OS v2.0</h1>
-    <div id="calc">
-        <input id="display" readonly value="0">
-        <div class="grid">
-            <button onclick="c()">C</button>
-            <button onclick="a('/')">/</button>
-            <button onclick="a('*')">*</button>
-            <button onclick="a('-')">-</button>
-            <button onclick="a('7')">7</button>
-            <button onclick="a('8')">8</button>
-            <button onclick="a('9')">9</button>
-            <button onclick="a('+')">+</button>
-            <button onclick="a('4')">4</button>
-            <button onclick="a('5')">5</button>
-            <button onclick="a('6')">6</button>
-            <button onclick="e()">=</button>
-            <button onclick="a('1')">1</button>
-            <button onclick="a('2')">2</button>
-            <button onclick="a('3')">3</button>
-            <button onclick="a('0')">0</button>
+
+    <h1>CRUSYS SYSTEM v2.0</h1>
+
+    <div class="container">
+        <div class="card">
+            <h3>HACKER CLICKER</h3>
+            <div id="click-count">0</div>
+            <button class="btn-main" onclick="doClick()">КЛИКАТЬ!</button>
+        </div>
+
+        <div class="card">
+            <h3>CORE CALC</h3>
+            <input id="display" readonly value="0">
+            <div class="calc-grid">
+                <button onclick="c_clr()" style="grid-column: span 2">C</button>
+                <button onclick="c_add('/')" class="btn-op">/</button>
+                <button onclick="c_add('*')" class="btn-op">*</button>
+                <button onclick="c_add('7')">7</button><button onclick="c_add('8')">8</button><button onclick="c_add('9')">9</button>
+                <button onclick="c_add('-')" class="btn-op">-</button>
+                <button onclick="c_add('4')">4</button><button onclick="c_add('5')">5</button><button onclick="c_add('6')">6</button>
+                <button onclick="c_add('+')" class="btn-op">+</button>
+                <button onclick="c_add('1')">1</button><button onclick="c_add('2')">2</button><button onclick="c_add('3')">3</button>
+                <button onclick="c_res()" class="btn-op" style="background:#00ff88; color:#000">=</button>
+                <button onclick="c_add('0')" style="grid-column: span 4">0</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>ROCKET HUNT</h3>
+            <div id="game-area">
+                <div id="rocket" onclick="fly()">🚀</div>
+            </div>
+            <p>Поймай её!</p>
         </div>
     </div>
-    <script src="lib/calc.js"></script>
+
+    <footer>Status: Server 24/7 Online | User: Crusys</footer>
+
+    <script>
+        // ЛОГИКА КЛИКЕРА
+        let clicks = 0;
+        function doClick() {
+            clicks++;
+            document.getElementById('click-count').innerText = clicks;
+        }
+
+        // ЛОГИКА КАЛЬКУЛЯТОРА
+let disp = document.getElementById('display');
+        function c_add(v) { if(disp.value=='0') disp.value=v; else disp.value+=v; }
+        function c_clr() { disp.value='0'; }
+        function c_res() { try { disp.value = eval(disp.value); } catch { disp.value='Error'; setTimeout(c_clr, 1000); } }
+
+        // ЛОГИКА РАКЕТЫ
+        function fly() {
+            const r = document.getElementById('rocket');
+            const area = document.getElementById('game-area');
+            const maxX = area.clientWidth - 50;
+            const maxY = area.clientHeight - 50;
+            r.style.left = Math.random() * maxX + 'px';
+            r.style.top = Math.random() * maxY + 'px';
+        }
+    </script>
 </body>
 </html>
