@@ -3,124 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crusys OS v2.0 - Update Center</title>
+    <title>Crusys OS v2.0</title>
     <style>
-        body { background: #0a0a0a; color: #0f8; font-family: 'Courier New', monospace; text-align: center; margin: 0; padding: 20px; overflow-x: hidden; }
+        body { background: #0a0a0a; color: #0f8; font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; }
         
-        /* Меню обновлений (Установщик) */
-        #update-menu {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 100;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .installer-box {
-            width: 80%; max-width: 500px; border: 2px solid #0f8; padding: 30px; border-radius: 10px; background: #111;
-        }
-        .progress-bar { width: 100%; height: 20px; border: 1px solid #0f8; margin-top: 20px; position: relative; }
-        #progress-fill { width: 0%; height: 100%; background: #0f8; transition: 0.3s; }
-        .log-text { font-size: 0.8rem; color: #aaa; margin-top: 10px; height: 40px; }
-        .btn-install { background: #0f8; color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        /* Навигация */
+        nav { background: #111; border-bottom: 2px solid #0f8; padding: 10px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        nav button { background: #000; color: #0f8; border: 1px solid #0f8; padding: 10px 15px; cursor: pointer; font-size: 0.8rem; }
+        nav button:hover { background: #0f8; color: #000; }
+        nav button.active { background: #0f8; color: #000; box-shadow: 0 0 10px #0f8; }
 
-        /* Основной контент */
-        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; opacity: 0.3; transition: 1s; filter: blur(5px); }
-        .active-system { opacity: 1 !important; filter: blur(0) !important; }
-        .card { background: #1a1a1a; border: 1px solid #0f8; border-radius: 15px; padding: 20px; width: 300px; }
-        
-        /* Калькулятор и игры */
-        #display { width: 100%; height: 50px; background: #000; color: #0f8; border: 1px solid #0f8; font-size: 1.5rem; text-align: right; margin-bottom: 10px; padding: 5px; box-sizing: border-box; }
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-        button { background: #222; color: #0f8; border: 1px solid #0f8; padding: 15px; cursor: pointer; }
-        #rocket { font-size: 40px; position: relative; cursor: pointer; transition: 0.2s; }
+        /* Контейнеры страниц */
+        .page { display: none; height: calc(100vh - 60px); padding: 20px; box-sizing: border-box; flex-direction: column; align-items: center; justify-content: center; }
+        .page.active { display: flex; }
+
+        /* Калькулятор */
+        .calc-box { background: #1a1a1a; padding: 20px; border-radius: 10px; border: 1px solid #0f8; }
+        #display { width: 220px; height: 50px; background: #000; color: #0f8; border: 1px solid #0f8; font-size: 1.5rem; text-align: right; margin-bottom: 10px; padding: 5px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .grid button { width: 50px; height: 50px; background: #222; color: #0f8; border: 1px solid #444; cursor: pointer; }
+
+        /* Игры */
+        #rocket { font-size: 60px; position: relative; cursor: pointer; transition: 0.2s; }
+        .big-text { font-size: 4rem; color: #ff9500; margin: 20px 0; }
+
+        /* Центр обновлений */
+        .installer { width: 90%; max-width: 400px; border: 2px solid #0f8; padding: 20px; background: #111; }
+        .bar { width: 100%; height: 20px; border: 1px solid #0f8; margin-top: 15px; }
+        #fill { width: 0%; height: 100%; background: #0f8; }
     </style>
 </head>
 <body>
 
-    <div id="update-menu">
-        <div class="installer-box">
-            <h2>CRUSYS INSTALLER v2.0</h2>
-            <p>Обнаружен новый пакет изменений:</p>
-            <ul style="text-align: left; font-size: 0.9rem;">
-                <li>+ Модуль Core Calculator</li>
-                <li>+ Движок Rocket Hunt</li>
-                <li>+ Система Hacker Clicker</li>
-                <li>+ Оптимизация под Termux</li>
-            </ul>
-            <div class="progress-bar"><div id="progress-fill"></div></div>
-            <div id="status-log" class="log-text">Ожидание запуска...</div>
-            <button id="install-btn" class="btn-install" onclick="startUpdate()">УСТАНОВИТЬ ОБНОВЛЕНИЯ</button>
-        </div>
-    </div>
+    <nav>
+        <button onclick="showPage('p-calc', this)">КАЛЬКУЛЯТОР</button>
+        <button onclick="showPage('p-click', this)">КЛИКЕР</button>
+        <button onclick="showPage('p-rocket', this)">РАКЕТА</button>
+        <button onclick="showPage('p-upd', this)">ЦЕНТР ОБНОВЛЕНИЙ</button>
+    </nav>
 
-    <div id="main-content" class="container">
-        <div class="card">
-            <h3>CLICKER</h3>
-            <div id="clicks" style="font-size: 2rem;">0</div>
-            <button onclick="clicker()" style="width:100%; background:#0f8; color:#000">КЛИК</button>
-        </div>
-
-        <div class="card">
-            <h3>CALC</h3>
+    <div id="p-calc" class="page active">
+        <div class="calc-box">
             <input id="display" readonly value="0">
-            <div class="calc-grid">
+            <div class="grid">
                 <button onclick="cl()">C</button><button onclick="ad('/')">/</button><button onclick="ad('*')">*</button><button onclick="ad('-')">-</button>
                 <button onclick="ad('7')">7</button><button onclick="ad('8')">8</button><button onclick="ad('9')">9</button><button onclick="ad('+')">+</button>
-                <button onclick="res()" style="grid-column: span 2; background:#0f8; color:#000">=</button>
-                <button onclick="ad('0')" style="grid-column: span 2">0</button>
+                <button onclick="ad('4')">4</button><button onclick="ad('5')">5</button><button onclick="ad('6')">6</button><button onclick="res()" style="grid-row: span 2; height: 105px; background: #0f8; color: #000">=</button>
+                <button onclick="ad('1')">1</button><button onclick="ad('2')">2</button><button onclick="ad('3')">3</button>
+                <button onclick="ad('0')" style="grid-column: span 3; width: 160px;">0</button>
             </div>
         </div>
+    </div>
 
-        <div class="card">
-            <h3>ROCKET</h3>
-            <div id="rocket" onclick="fly()">🚀</div>
+    <div id="p-click" class="page">
+        <h2>HACKER CLICKER</h2>
+        <div id="clicks" class="big-text">0</div>
+        <button onclick="clickMe()" style="padding: 20px 50px; background: #0f8; color: #000; font-weight: bold; border: none; cursor: pointer;">КЛИК!</button>
+    </div>
+
+    <div id="p-rocket" class="page">
+        <h2>ПОЙМАЙ РАКЕТУ</h2>
+        <div id="rocket-area" style="width: 300px; height: 300px; border: 1px dashed #444; position: relative;">
+            <div id="rocket" onclick="flyRocket()" style="position: absolute; left: 120px; top: 120px;">🚀</div>
+        </div>
+    </div><div id="p-upd" class="page">
+        <div class="installer">
+            <h3>CRUSYS UPDATE CENTER</h3>
+            <p id="upd-status">Версия 2.0. Пакеты проверены.</p>
+            <div class="bar"><div id="fill"></div></div>
+            <button id="upd-btn" onclick="runUpdate()" style="margin-top: 15px; width: 100%; padding: 10px; background: #0f8; color: #000; border: none; cursor: pointer;">ПРОВЕРИТЬ ОБНОВЛЕНИЯ</button>
         </div>
     </div>
-<script>
-        // ЛОГИКА УСТАНОВЩИКА
-        function startUpdate() {
-            const btn = document.getElementById('install-btn');
-            const fill = document.getElementById('progress-fill');
-            const log = document.getElementById('status-log');
-            const menu = document.getElementById('update-menu');
-            const main = document.getElementById('main-content');
-            
-            btn.style.display = 'none';
-            let progress = 0;
-            const steps = [
-                "Распаковка библиотек...", 
-                "Интеграция калькулятора...", 
-                "Запуск ракетного двигателя...", 
-                "Финализация версии 2.0...", 
-                "Система готова!"
-            ];
 
-            const interval = setInterval(() => {
-                progress += 2;
-                fill.style.width = progress + "%";
-                log.innerText = steps[Math.floor(progress / 25)] || "Почти готово...";
-
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        menu.style.display = 'none';
-                        main.classList.add('active-system');
-                    }, 500);
-                }
-            }, 50);
+    <script>
+        // Навигация
+        function showPage(pageId, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            btn.classList.add('active');
         }
 
-        // ЛОГИКА САЙТА
-        let c = 0;
-        function clicker() { c++; document.getElementById('clicks').innerText = c; }
-        
-        let d = document.getElementById('display');
-        function ad(v) { if(d.value=='0') d.value=v; else d.value+=v; }
-        function cl() { d.value='0'; }
-        function res() { try { d.value = eval(d.value); } catch { d.value='Err'; } }
+        // Логика Калькулятора
+        let disp = document.getElementById('display');
+        function ad(v) { if(disp.value=='0') disp.value=v; else disp.value+=v; }
+        function cl() { disp.value='0'; }
+        function res() { try { disp.value = eval(disp.value); } catch { disp.value='Error'; } }
 
-        function fly() {
+        // Логика Кликера
+        let count = 0;
+        function clickMe() { count++; document.getElementById('clicks').innerText = count; }
+
+        // Логика Ракеты
+        function flyRocket() {
             const r = document.getElementById('rocket');
-            r.style.left = Math.random() * 100 + 'px';
-            r.style.top = Math.random() * 50 + 'px';
+            r.style.left = Math.random() * 240 + 'px';
+            r.style.top = Math.random() * 240 + 'px';
+        }
+
+        // Логика Обновлений
+        function runUpdate() {
+            const btn = document.getElementById('upd-btn');
+            const fill = document.getElementById('fill');
+            const status = document.getElementById('upd-status');
+            btn.disabled = true;
+            let p = 0;
+            const anim = setInterval(() => {
+                p += 5;
+                fill.style.width = p + "%";
+                status.innerText = "Загрузка модулей... " + p + "%";
+                if(p >= 100) {
+                    clearInterval(anim);
+                    status.innerText = "Система Crusys OS v2.0 обновлена!";
+                    btn.innerText = "ГОТОВО";
+                }
+            }, 100);
         }
     </script>
 </body>
